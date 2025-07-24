@@ -67,6 +67,7 @@ lead_data AS (
 
         rsv.scheduled_on::date AS site_visit_scheduled_date,
         rsv.conducted_on::date AS site_visit_conducted_date,
+        rsv.confirmed
         rsv.revisited,
 
         rbd.booking_date::date AS booking_date,
