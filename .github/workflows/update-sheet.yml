@@ -2,8 +2,11 @@ name: Update Google Sheet Daily
 
 on:
   schedule:
-    - cron: "0 2 * * *"  # Runs every day at 2 AM UTC (7:30 AM IST)
-  workflow_dispatch:  # Allows manual trigger
+    - cron: '30 4 * * *'   # 10:00 AM IST
+    - cron: '30 9 * * *'   # 3:00 PM IST
+    - cron: '30 11 * * *'  # 5:00 PM IST
+  workflow_dispatch:       # Optional: allows manual trigger from GitHub UI
+
 
 jobs:
   run-script:
