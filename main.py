@@ -80,7 +80,7 @@ SELECT
     ds.created_date,
     ld.*
 FROM date_series ds
-LEFT JOIN lead_data ld ON ds.created_date = ld.campaign_created_date
+LEFT JOIN lead_data ld ON ds.created_date = ld.lead_created_date
 ORDER BY ds.created_date, ld.lead_id;
 """
 
