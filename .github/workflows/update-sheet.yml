@@ -2,33 +2,28 @@ name: Update Google Sheet Daily
 
 on:
   schedule:
-    - cron: '0 3 * * *'  # Every day at 8:30 AM IST (3:00 AM UTC)
-  workflow_dispatch:      # Manual trigger support
+    - cron: "0 2 * * *"  # Runs every day at 2 AM UTC (7:30 AM IST)
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  update-sheet:
+  run-script:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install pandas sqlalchemy psycopg2-binary gspread google-auth
 
-      - name: Create credentials file
-        run: |
-          echo "${{ secrets.GSHEET_CREDS_JSON }}" > creds.json
-
-      - name: Run the script
+      - name: Run script to update Google Sheet
         env:
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
         run: |
-          python main.py
+          python main.py  # Replace with your script name if different
