@@ -2,6 +2,8 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 import gspread
 from google.oauth2.service_account import Credentials
+import os
+import json
 
 # --- PostgreSQL Connection Info ---
 db_user = 'reporting_client1126'
@@ -13,7 +15,6 @@ db_name = 'selldo_production'
 # --- Google Sheets Settings ---
 SPREADSHEET_NAME = "metrics_combined"
 WORKSHEET_NAME = "Sheet2"
-SERVICE_ACCOUNT_FILE = "/content/postgres-466606-80d08804b8c8.json"
 
 # --- Create SQLAlchemy DB Engine ---
 engine = create_engine(f'postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}')
@@ -91,16 +92,20 @@ with engine.connect() as conn:
     df = pd.read_sql_query(text(query), conn)
 print(f"✅ Query complete. Rows fetched: {len(df)}")
 
-# --- Upload to Google Sheets ---
+# --- Authenticate with Google Sheets ---
 print("🔐 Authenticating with Google Sheets...")
 scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=scopes)
+
+# Load credentials from environment variable
+service_account_info = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"])
+creds = Credentials.from_service_account_info(service_account_info, scopes=scopes)
 gc = gspread.authorize(creds)
 
 print("📄 Opening Google Sheet...")
-sheet = gc.open("metrics_combined")
-worksheet = sheet.worksheet("Sheet2")
+sheet = gc.open(SPREADSHEET_NAME)
+worksheet = sheet.worksheet(WORKSHEET_NAME)
 
+# --- Upload Data to Google Sheet ---
 print("📤 Uploading data...")
 df = df.astype(str)  # Ensure compatibility with Google Sheets
 worksheet.clear()
