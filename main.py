@@ -13,14 +13,7 @@ db_name = 'selldo_production'
 # --- Google Sheets Settings ---
 SPREADSHEET_NAME = "metrics_combined"
 WORKSHEET_NAME = "Sheet2"
-import json
-import os
-
-# Write the secret to a temporary file
-SERVICE_ACCOUNT_FILE = "gcp_credentials.json"
-with open(SERVICE_ACCOUNT_FILE, "w") as f:
-    f.write(os.environ["GCP_SERVICE_ACCOUNT_JSON"])
-
+SERVICE_ACCOUNT_FILE = "/content/postgres-466606-80d08804b8c8.json"
 
 # --- Create SQLAlchemy DB Engine ---
 engine = create_engine(f'postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}')
@@ -67,7 +60,7 @@ lead_data AS (
 
         rsv.scheduled_on::date AS site_visit_scheduled_date,
         rsv.conducted_on::date AS site_visit_conducted_date,
-        rsv.confirmed
+        rsv.confirmed,
         rsv.revisited,
 
         rbd.booking_date::date AS booking_date,
